@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 80%;
+            max-width: 500px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .input-section {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        #todoInput {
+            flex: 1;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .todo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        .todo-item:hover {
+            background-color: #f0f0f0;
+        }
+       .delete-btn {
+            background-color: #ff4444;
+            padding: 4px 8px;
+        }
+       .delete-btn:hover {
+            background-color: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Todo List</h1>
+        <div class="input-section">
+            <input type="text" id="todoInput" placeholder="Enter a new task...">
+            <button onclick="addTodo()">Add Task</button>
+        </div>
+        <div id="todoList"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', loadTodos);
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            const todoText = input.value.trim();
+            
+            if (todoText === '') return;
+
+            const todo = {
+                id: Date.now(),
+                text: todoText,
+                completed: false
+            };
+
+            saveTodo(todo);
+            appendTodoElement(todo);
+            
+            input.value = '';
+        }
+        function saveTodo(todo) {
+            const todos = JSON.parse(localStorage.getItem('todos') || '[]');
+            todos.push(todo);
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+
+        function loadTodos() {
+            const todos = JSON.parse(localStorage.getItem('todos') || '[]');
+            todos.forEach(todo => appendTodoElement(todo));
+        }
+        function appendTodoElement(todo) {
+            const todoList = document.getElementById('todoList');
+            
+            const div = document.createElement('div');
+            div.className = 'todo-item';
+            div.innerHTML = `
+                <span>${todo.text}</span>
+                <button class="delete-btn" onclick="deleteTodo(${todo.id})">Delete</button>
+            `;
+
+            todoList.appendChild(div);
+        }
+
+        function deleteTodo(id) {
+            let todos = JSON.parse(localStorage.getItem('todos') || '[]');
+            todos = todos.filter(todo => todo.id !== id);
+            localStorage.setItem('todos', JSON.stringify(todos));
+            document.getElementById('todoList').innerHTML = '';
+            loadTodos();
+        }
+
+        document.getElementById('todoInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addTodo();
+            }
+        });
+        /*
+Technologies Used:
+HTML: Provides the structure and content
+CSS: Handles styling and layout
+JavaScript: Manages functionality and interactivity
+LocalStorage: Used for data persistence
+Key Features:
+Add new todos with text input
+Delete existing todos
+Data persistence using localStorage
+Responsive design
+Clean and modern UI
+Enter key support for adding todos
+Core Functionalities:
+Add Todo: Users can add new tasks through input field
+Delete Todo: Each todo has a delete button for removal
+Local Storage: Todos are saved between page refreshes
+Responsive Design: Works on both desktop and mobile devices
+Code Structure:
+HTML: Contains the basic layout with input field and container
+CSS: Uses Flexbox for layout and modern styling
+JavaScript: Manages CRUD operations and localStorage handling
+Enhancement Possibilities:
+Add edit functionality
+Implement completion status
+Add categories or tags
+Include due dates
+Implement sorting/filtering
+Add animations
+Implement user authentication
+*/
+</script>
+</body>
+</html>
+
